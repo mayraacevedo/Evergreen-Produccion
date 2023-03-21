@@ -189,9 +189,8 @@
         }
         catch (Exception ex)
         {
-            _withIconLoadingDelete = false;
-            _withIconLoadingCreate = false;
-            _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+            DrawerRef<string> drawerRef = base.FeedbackRef as DrawerRef<string>;
+            await drawerRef!.CloseAsync("Ok");
         }
     }
 
