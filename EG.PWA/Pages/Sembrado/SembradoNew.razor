@@ -1,0 +1,266 @@
+﻿@inject NotificationService _notificationService
+@inject MasterDataServiceProxy _apiService
+@inject SembradoProxy _sembradoService
+@inherits FeedbackComponent<Sembrado, string>
+
+<Form Model="@_sembrado"
+      Layout="@FormLayout.Vertical"
+      Size="@AntSizeLDSType.Default">
+   
+      <FormItem Label="Observaciones" Style="display: inline-block; width: 100%">
+         <TextArea @bind-Value="_sembrado.Observaciones" Style="width: 100%" />
+      </FormItem>
+    <FormItem>
+            <ToolTip Title="@("Agregar")"><Button Loading="_withIconLoadingCreate" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Plus" OnClick="@(() => OpenModal(new SembradoDet()))"/></ToolTip>
+    </FormItem>
+
+    <Table @ref="@_tableSemb" TItem="SembradoDet" DataSource="_sembrado.SembradosDets" HidePagination="false" Size=@TableSize.Small>
+        <ChildContent Context="item">
+            <AntDesign.Column TData="string" Title="Parcela">
+                @($"{@item.NombreParcela}")
+            </AntDesign.Column>
+            <AntDesign.Column TData="string" Title="Semilla">
+                @($"{@item.NombreSemilla}")
+            </AntDesign.Column>
+            <AntDesign.Column TData="string" Title="Estado">
+               @($"{@item.NombreEstado}")
+            </AntDesign.Column>
+            <AntDesign.Column TData="string" Title="Observaciones">
+               @($"{@item.Observaciones}")
+            </AntDesign.Column>
+            <ActionColumn>
+                <Space>
+                    <SpaceItem><ToolTip Title="@("Editar")"><Button Loading="_withIconLoadingCreate" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Edit" OnClick="@(() => OpenModal(item))"></Button></ToolTip></SpaceItem>
+                </Space>
+                <Space>
+                    <SpaceItem>
+                        <ToolTip Title="@("Eliminar")">
+                        <Popconfirm Title="¿Desea elimnar el registro?"
+                                    OnConfirm="@(()=>RemoveField(item))"
+                                    OkText="Si"
+                                    CancelText="No" Icon="Delete">
+                            <Button Loading="_withIconLoadingDelete" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Delete"></Button>
+                        </Popconfirm>
+                        </ToolTip>
+                    </SpaceItem>
+                </Space>
+            </ActionColumn>
+
+
+        </ChildContent>
+    </Table>
+   
+    <FormItem WrapperColOffset="8" WrapperColSpan="16">
+        <Button Loading="_withIconLoadingCreate" Type="primary" OnClick="Save">Guardar</Button>
+    </FormItem>
+</Form>
+
+<Modal OkText="@("Agregar")"
+               OnOk="@AddDet" Title="Detalle Sembrado"
+               OnCancel="@(() => HandleCancel("file"))" Visible="@_modalDetalle">
+            <Form Model="_sembradoDet">
+                <FormItem Label="Lote/Parcela" Style="display: inline-block; width: 100%">
+                    <Select EnableSearch DropdownMatchSelectWidth="false" DataSource="@_dataMaster["Parcela"]"
+                    @bind-Value="@_sembradoDet.IdParcela"
+                    LabelName="@nameof(ReferentialRecord.Nombre)"
+                    ValueName="@nameof(ReferentialRecord.Id)">
+                    </Select>
+                </FormItem>
+                <FormItem Label="Semilla" Style="display: inline-block; width: 100%">
+                    <Select EnableSearch DropdownMatchSelectWidth="false" DataSource="@_dataMaster["Semilla"]"
+                    @bind-Value="@_sembradoDet.IdSemilla"
+                    LabelName="@nameof(ReferentialRecord.Nombre)"
+                    ValueName="@nameof(ReferentialRecord.Id)">
+                    </Select>
+                </FormItem>
+                <FormItem Label="Estado" Style="display: inline-block; width: 100%">
+                    <Select EnableSearch DropdownMatchSelectWidth="false" DataSource="@_dataMaster["EstadoSembradoParcela"]"
+                    @bind-Value="@_sembradoDet.IdEstado"
+                    LabelName="@nameof(ReferentialRecord.Nombre)"
+                    ValueName="@nameof(ReferentialRecord.Id)">
+                    </Select>
+                </FormItem>
+                <FormItem Label="Observaciones" Style="display: inline-block; width: 100%">
+                   <TextArea @bind-Value="_sembradoDet.Observaciones" Style="width: 100%" />
+                </FormItem>
+            </Form>
+        </Modal>
+
+            @code {
+    public Sembrado _sembrado = new Sembrado();
+    private SembradoDet _sembradoDet = new SembradoDet();
+
+    private bool _withIconLoadingCreate,_withIconLoadingDelete;
+
+    List<ReferentialRecord> _parcelas = new List<ReferentialRecord>();
+    List<ReferentialRecord> _semillas = new List<ReferentialRecord>();
+    List<ReferentialRecord> _estados = new List<ReferentialRecord>();
+
+    private Table<SembradoDet> _tableSemb;
+
+    private List<SembradoDet> _listDet = new List<SembradoDet>();
+    private bool _modalDetalle = false;
+    private Dictionary<string, List<ReferentialRecord>> _dataMaster { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _sembrado = Options;
+        if(_sembrado.Id==0)
+        _sembrado.SembradosDets = new List<SembradoDet>();
+
+        await GetMaster();
+
+    }
+    async Task GetMaster()
+    {
+        try
+        {
+            _dataMaster = new Dictionary<string, List<ReferentialRecord>>();
+            List<ReferentialRecord> data = await _apiService.GetMasterTableReferentialData("Parcela");
+            _dataMaster.Add("Parcela", data);
+
+            data = await _apiService.GetMasterTableReferentialData("Semilla");
+            _dataMaster.Add("Semilla", data);
+            data = await _apiService.GetMasterTableReferentialData("EstadoSembradoParcela");
+            _dataMaster.Add("EstadoSembradoParcela", data);
+        }
+        catch (Exception ex)
+        {
+            await _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+        }
+    }
+
+    async Task RemoveField(SembradoDet item)
+    {
+        try
+        {
+            _withIconLoadingDelete = true;
+
+            if(!string.IsNullOrEmpty(item.Index))
+                _sembrado.SembradosDets=_sembrado.SembradosDets.Where(x => x.Index != item.Index).ToList();
+
+            _notificationService.Success(new NotificationConfig() { Message = "Eliminado" });
+
+            InvokeAsync(() =>
+                       {
+
+                           StateHasChanged();
+                       });
+
+            _withIconLoadingDelete = false;
+
+        }
+        catch (Exception ex)
+        {
+            _withIconLoadingCreate = false;
+            _withIconLoadingDelete = false;
+            _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+        }
+
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            if(_sembrado.SembradosDets.Count==0)
+            {
+                _notificationService.Error(new NotificationConfig() { Message = "Debe agregar información de parcelas y semillas" });
+                return;
+            }
+            _withIconLoadingCreate = true;
+
+
+            _sembrado.FechaCreacion = DateTime.Now;
+            _sembrado.IdEstado = 1;
+
+            _sembrado.Codigo = "NEW";
+
+            _sembrado = await _sembradoService.Save(_sembrado);
+
+            _notificationService.Success(new NotificationConfig() { Message = "Registrado" });
+
+
+            _withIconLoadingDelete = false;
+            DrawerRef<string> drawerRef = base.FeedbackRef as DrawerRef<string>;
+            await drawerRef!.CloseAsync("Ok");
+            _withIconLoadingCreate = false;
+
+        }
+        catch (Exception ex)
+        {
+            _withIconLoadingDelete = false;
+            _withIconLoadingCreate = false;
+            _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+        }
+    }
+
+
+    //Cerrar modal
+    private void HandleCancel(string tipo)
+    {
+
+        _modalDetalle = false;
+
+    }
+    async Task AddDet()
+    {
+        try
+        {
+            if (_sembradoDet.IdParcela == 0)
+                _notificationService.Error(new NotificationConfig() { Message = "Debe seleccionar un Lote o Parcela" });
+            if (_sembradoDet.IdSemilla == 0)
+                _notificationService.Error(new NotificationConfig() { Message = "Debe seleccionar una Semilla" });
+            if (_sembradoDet.IdEstado == 0)
+                _notificationService.Error(new NotificationConfig() { Message = "Debe seleccionar un Estado" });
+
+
+            _withIconLoadingCreate = true;
+
+
+            var parcela = _dataMaster["Parcela"].Where(x => x.Id.Equals(_sembradoDet.IdParcela)).FirstOrDefault();
+
+            _sembradoDet.NombreParcela = parcela.Nombre;
+
+            var semilla = _dataMaster["Semilla"].Where(x => x.Id.Equals(_sembradoDet.IdSemilla)).FirstOrDefault();
+
+            _sembradoDet.NombreSemilla =semilla.Nombre;
+
+            var estado = _dataMaster["EstadoSembradoParcela"].Where(x => x.Id.Equals(_sembradoDet.IdEstado)).FirstOrDefault();
+
+            _sembradoDet.NombreEstado = estado.Nombre;
+
+            if (!string.IsNullOrEmpty(_sembradoDet.Index))
+            {
+                _sembrado.SembradosDets = _sembrado.SembradosDets.Where(x => x.Index != _sembradoDet.Index).ToList();
+            }
+
+            _sembradoDet.Index = Guid.NewGuid().ToString();
+            _sembradoDet.FechaCreacion = DateTime.Now;
+
+            _sembrado.SembradosDets.Add(_sembradoDet);
+
+            _sembradoDet = new SembradoDet();
+            _withIconLoadingCreate = false;
+
+            _modalDetalle = false;
+
+        }
+        catch (Exception ex)
+        {
+            _withIconLoadingCreate = false;
+            _withIconLoadingDelete = false;
+            _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+        }
+    }
+
+
+    private void OpenModal(SembradoDet item)
+    {
+        _sembradoDet = item;
+
+        _modalDetalle = true;
+    
+    }
+
+}

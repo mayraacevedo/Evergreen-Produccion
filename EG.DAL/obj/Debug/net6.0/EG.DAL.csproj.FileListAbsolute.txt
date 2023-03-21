@@ -1,0 +1,15 @@
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\bin\Debug\net6.0\EG.DAL.deps.json
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\bin\Debug\net6.0\EG.DAL.dll
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\bin\Debug\net6.0\EG.DAL.pdb
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\bin\Debug\net6.0\EG.Models.dll
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\bin\Debug\net6.0\EG.Models.pdb
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\EG.DAL.csproj.AssemblyReference.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\EG.DAL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\EG.DAL.AssemblyInfoInputs.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\EG.DAL.AssemblyInfo.cs
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\EG.DAL.csproj.CoreCompileInputs.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\EG.DAL.csproj.CopyComplete
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\EG.DAL.dll
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\refint\EG.DAL.dll
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\EG.DAL.pdb
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.DAL\obj\Debug\net6.0\ref\EG.DAL.dll

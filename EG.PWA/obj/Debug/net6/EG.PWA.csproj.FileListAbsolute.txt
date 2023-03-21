@@ -1,0 +1,8 @@
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.PWA\obj\Debug\net6\EG.PWA.csproj.AssemblyReference.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.PWA\obj\Debug\net6\EG.PWA.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.PWA\obj\Debug\net6\EG.PWA.AssemblyInfoInputs.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.PWA\obj\Debug\net6\EG.PWA.AssemblyInfo.cs
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.PWA\obj\Debug\net6\EG.PWA.csproj.CoreCompileInputs.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.PWA\obj\Debug\net6\EG.PWA.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.PWA\obj\Debug\net6\EG.PWA.RazorAssemblyInfo.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.PWA\obj\Debug\net6\EG.PWA.RazorAssemblyInfo.cs

@@ -1,0 +1,303 @@
+﻿@namespace EG.PWA.Pages.SembradoList
+@inject NotificationService _notificationService
+@inject MasterDataServiceProxy _apiService
+@inject SembradoProxy _sembradoService
+@inject NavigationManager Navigation
+@inject NavigationManager NavigationManager
+@inject DrawerService _drawerService
+@inject IJSRuntime _jsRuntime
+@using System.Text.Json;
+@using EG.PWA.Pages.Sembrado;
+@using EG.PWA.Proxies;
+@attribute [AllowAnonymous]
+@page "/"
+
+<PageContainer Title="@($"Sembrados")">
+    <Breadcrumb>
+        <Breadcrumb>
+            <BreadcrumbItem>Inicio</BreadcrumbItem>
+            <BreadcrumbItem>Sembrado</BreadcrumbItem>
+        </Breadcrumb>
+    </Breadcrumb>
+    <Extra>
+            <Button Type="primary" OnClick="OpenNewRow">Nuevo Sembrado</Button>
+    </Extra>
+    <Content>
+        <div class="pageHeaderContent__b__1">
+            <p>
+                Gestión de los sembrados
+            </p>
+        </div>
+        <Space Style="margin-bottom: 1%; width: 100%">
+            <SpaceItem>
+                <SimpleSelect EnableSearch DropdownMatchSelectWidth="false" Style="width: 200px" DefaultValue="" value="@GetData("IdParcela")" OnSelectedItemChanged="@((e) => SetData("IdParcela", e))">
+                    <SelectOptions>
+                        <SimpleSelectOption Value="" Label="--Lote/Parcela--"></SimpleSelectOption>
+                        @if (_dataMaster != null && _dataMaster.ContainsKey("Parcela"))
+                        {
+                            foreach (ReferentialRecord rc in _dataMaster["Parcela"])
+                            {
+                                <SimpleSelectOption Value="@(rc.Id.ToString())" Label="@rc.Nombre"></SimpleSelectOption>
+                            }
+                        }
+                    </SelectOptions>
+                </SimpleSelect>
+            </SpaceItem>
+            
+            <SpaceItem>
+                <SimpleSelect EnableSearch DropdownMatchSelectWidth="false" Style="width: 200px" DefaultValue="" value="@GetData("IdSemilla")" OnSelectedItemChanged="@((e) => SetData("IdSemilla", e))">
+                    <SelectOptions>
+                        <SimpleSelectOption Value="" Label="--Semilla--"></SimpleSelectOption>
+                        @if (_dataMaster != null && _dataMaster.ContainsKey("Semilla"))
+                        {
+                            foreach (ReferentialRecord rc in _dataMaster["Semilla"])
+                            {
+                                <SimpleSelectOption Value="@(rc.Id.ToString())" Label="@rc.Nombre"></SimpleSelectOption>
+                            }
+                        }
+                    </SelectOptions>
+                </SimpleSelect>
+            </SpaceItem>
+            <SpaceItem>
+                <SimpleSelect EnableSearch DropdownMatchSelectWidth="false" Style="width: 200px" DefaultValue="" value="@GetData("IdEstado")" OnSelectedItemChanged="@((e) => SetData("IdEstado", e))">
+                    <SelectOptions>
+                        <SimpleSelectOption Value="" Label="--Estado--"></SimpleSelectOption>
+                        @if (_dataMaster != null && _dataMaster.ContainsKey("EstadoSembrado"))
+                        {
+                            foreach (ReferentialRecord rc in _dataMaster["EstadoSembrado"])
+                            {
+                                <SimpleSelectOption Value="@(rc.Id.ToString())" Label="@rc.Nombre"></SimpleSelectOption>
+                            }
+                        }
+                    </SelectOptions>
+                </SimpleSelect>
+            </SpaceItem>
+             <SpaceItem>
+                <Button Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Search" @onclick="Reload" />
+            </SpaceItem>
+            <SpaceItem>
+                <Button Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Export" @onclick="Export" />
+            </SpaceItem>
+        </Space>
+      
+    </Content>
+    <ExtraContent>
+
+    </ExtraContent>
+    <ChildContent>
+        <Card>
+            <Table @ref="@_table" TItem="Sembrado"
+                   DataSource="_data.Data"
+                   @bind-PageIndex="_pageIndex"
+                   @bind-PageSize="_pageSize"
+                   Total="_total"
+                   Loading="_loading" OnChange="HandleTableChange" RemoteDataSource>
+                <AntDesign.Column TData="DateTime" Title="Código">
+                    @(context.Codigo)
+                </AntDesign.Column>
+                <AntDesign.Column TData="string" Title="Estado">
+                    @(context.IdEstadoNavigation.Nombre)
+                </AntDesign.Column>
+                <AntDesign.Column TData="string" Title="Fecha creacion">
+                    @(context.FechaCreacion)
+                </AntDesign.Column>
+                <ActionColumn>
+                        <Space>
+                             <SpaceItem><ToolTip Title="@("Editar")"><Button Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Edit" OnClick="@(()=>OpenTableRow(context))"></Button></ToolTip></SpaceItem>
+                        </Space>
+                            <Space>
+                                <SpaceItem>
+                                    <ToolTip Title="@("Eliminar")">
+                                        <Popconfirm Title="¿Desea elimnar el registro?"
+                                                OnConfirm="@(()=>Delete(context))"
+                                                OkText="Si"
+                                                CancelText="No" Icon="Delete">
+                                            <Button Shape="@ButtonShape.Circle" Loading="_withIconLoadingDelete" Icon="@IconType.Outline.Delete"></Button>
+                                        </Popconfirm>
+                                    </ToolTip>
+                                </SpaceItem>
+                            </Space>
+                      
+                </ActionColumn>
+            </Table>
+        </Card>
+    </ChildContent>
+</PageContainer>
+@code {
+    private Dictionary<string, List<ReferentialRecord>> _dataMaster { get; set; }
+    private Dictionary<string, object> _filters { get; set; } = new Dictionary<string, object>();
+    private PagedEntityQueryResult<Sembrado> _data;
+    private Table<Sembrado> _table;
+    bool _loading = false;
+    int _pageIndex = 1;
+    int _pageSize = 10;
+    int _total = 0;
+
+
+    private bool _withIconLoadingDelete = false;
+
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _data = new PagedEntityQueryResult<Sembrado>() { Data = new List<Sembrado>() };
+        await GetMaster();
+    }
+    private void SetData(string key, string e)
+    {
+        _filters[key] = e;
+
+        var options = new JsonSerializerOptions { WriteIndented = true };
+    }
+    private object GetData(string key)
+    {
+        if (_filters != null && _filters.ContainsKey(key))
+        {
+            return _filters[key];
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+    public async Task OpenTableRow(Sembrado item)
+    {
+        try
+        {
+         var options = new DrawerOptions()
+                    {
+                        Title = $"Editar Sembrado {item.Codigo}",
+                        Width = 1024,
+                        BodyStyle = "drawer-lg"
+                    };
+
+        var sembrado = await _sembradoService.GetDetail(item.Id);
+        var result = await _drawerService.CreateDialogAsync<SembradoNew, Sembrado, string>(options, sembrado);
+        if (result != null && result == "OK")
+        {
+            Reload();
+        }
+        }
+        catch (Exception ex)
+        {
+            
+            throw;
+        }
+       
+
+    }
+
+    public async Task OpenNewRow()
+    {
+        var options = new DrawerOptions()
+            {
+                Title = $"Nuevo Sembrado",
+                Width = 1024,
+                BodyStyle = "drawer-lg"
+            };
+        Sembrado doc = new Sembrado();
+        var result = await _drawerService.CreateDialogAsync<SembradoNew, Sembrado, string>(options, doc);
+        if (result != null)
+        {
+            Reload();
+            
+        }
+
+    }
+
+
+    public async Task Reload()
+    {
+        _table.ReloadData(1, _pageSize);
+    }
+
+    async Task GetMaster()
+    {
+        try
+        {
+            _dataMaster = new Dictionary<string, List<ReferentialRecord>>();
+            List<ReferentialRecord> data = await _apiService.GetMasterTableReferentialData("Parcela");
+            _dataMaster.Add("Parcela", data);
+            data = await _apiService.GetMasterTableReferentialData("Semilla");
+            _dataMaster.Add("Semilla", data);
+            data = await _apiService.GetMasterTableReferentialData("EstadoSembrado");
+            _dataMaster.Add("EstadoSembrado", data);
+
+        }
+        catch (Exception ex)
+        {
+            _loading = false;
+            await _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+        }
+    
+    }
+
+    private async Task Export()
+    {
+        try
+        {
+            var result = await _sembradoService.GetExcel(_filters, 1, 10);
+            using var streamRef = new DotNetStreamReference(stream: result);
+            await _jsRuntime.InvokeVoidAsync("downloadFileFromStream", "Sembrados.xlsx", streamRef);
+        }
+        catch (Exception ex)
+        {
+            _loading = false;
+            _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+        }
+
+    }
+
+    async Task HandleTableChange(QueryModel<Sembrado> queryModel)
+    {
+        try
+        {
+            _loading = true;
+            string sortField = string.Empty;
+            string sortOrder = string.Empty;
+            var sort = queryModel.SortModel.FirstOrDefault();
+            if (sort != null && !string.IsNullOrEmpty(sort.FieldName) && !string.IsNullOrEmpty(sort.Sort))
+            {
+                sortField = sort.FieldName.Replace("'", "").Replace("[", "").Replace("]", "");
+                sortOrder = sort.Sort;
+            }
+           _data = await _sembradoService.GetAll(_filters, queryModel.PageIndex, _pageSize, sortField, sortOrder);
+            _total = _data.TotalRecords;
+            _loading = false;
+        }
+        catch (Exception ex)
+        {
+            _loading = false;
+            _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+        }
+    }
+    async Task Delete(Sembrado item)
+    {
+        try
+        {
+            _withIconLoadingDelete = true;
+
+            await _sembradoService.Delete(item.Id);
+            _notificationService.Success(new NotificationConfig() { Message = "El registro ha sido eliminado con éxito" });
+            Reload();
+           
+
+            _withIconLoadingDelete = false;
+
+        }
+        catch (Exception ex)
+        {
+
+            _withIconLoadingDelete = false;
+            _notificationService.Error(new NotificationConfig() { Message = ex.Message });
+        }
+
+    }
+}
+

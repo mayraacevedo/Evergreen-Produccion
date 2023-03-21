@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EG.Core\EG.Core.csproj" />
+    <ProjectReference Include="..\EG.DAL\EG.DAL.csproj" />
+    <ProjectReference Include="..\EG.Models\EG.Models.csproj" />
+  </ItemGroup>
+
+</Project>

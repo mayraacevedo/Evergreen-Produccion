@@ -1,0 +1,12 @@
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\bin\Debug\net6.0\EG.Models.deps.json
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\bin\Debug\net6.0\EG.Models.dll
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\bin\Debug\net6.0\EG.Models.pdb
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\EG.Models.csproj.AssemblyReference.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\EG.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\EG.Models.AssemblyInfoInputs.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\EG.Models.AssemblyInfo.cs
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\EG.Models.csproj.CoreCompileInputs.cache
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\EG.Models.dll
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\refint\EG.Models.dll
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\EG.Models.pdb
+C:\Users\mayra\Desktop\Eafit\Arquitectura\Entrega 2\C#\Evergreen-Produccion\EG.Models\obj\Debug\net6.0\ref\EG.Models.dll
